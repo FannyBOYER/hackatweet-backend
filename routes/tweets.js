@@ -36,4 +36,31 @@ router.post("/", (req, res) => {
   });
 });
 
+//Afficher tweet dans composant Tweet>LastTweet
+router.get('/', (req, res) => {
+
+  User.findOne({ token: req.body.token }).then((data) => {
+    if (!data) {
+      res.json({ result: false, error: "User not found or wrong password" });
+    } else {
+  Tweet.find()
+    .populate('idUser', 'name username')
+    .then(data => {
+      const result = data.map(e => ({
+        firstname: e.idUser.name,
+        username: e.idUser.username,
+        text: e.text,
+        likes: e.likes,
+        hashtag: e.hashtag,
+        date: e.date,
+        id: e._id
+      }));
+      res.json(result);
+    })
+    }})
+  })
+
+
+
 module.exports = router;
+
