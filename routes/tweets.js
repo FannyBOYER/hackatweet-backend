@@ -72,27 +72,30 @@ router.delete("/", (req, res) => {
 });
 
 //Afficher tweet dans composant Tweet>LastTweet
-router.get('/', (req, res) => {
+router.get('/:token', (req, res) => {
 
-  User.findOne({ token: req.body.token }).then((data) => {
+  User.findOne({ token: req.params.token }).then((data) => {
     if (!data) {
-      res.json({ result: false, error: "User not found or wrong password" });
+        res.json({ result: false, error: "User not found or wrong password" });
     } else {
-  Tweet.find()
-    .populate('idUser', 'name username')
-    .then(data => {
-      const result = data.map(e => ({
-        firstname: e.idUser.name,
-        username: e.idUser.username,
-        text: e.text,
-        likes: e.likes,
-        hashtag: e.hashtag,
-        date: e.date,
-        id: e._id
-      }));
-      res.json(result);
-    })
-    }})
+        Tweet.find()
+            .populate({path: 'idUser likes' , select:'name username' })
+            .then(data => {
+                console.log(data);
+                const result = data.map(e => ({
+                    idTweet: e._id,
+                    idCreateur: e.idUser._id,
+                    firstname: e.idUser.name,
+                    username: e.idUser.username,
+                    text: e.text,
+                    likes: e.likes,
+                    hashtag: e.hashtag,
+                    date: e.date,
+
+                }));
+            res.json(result);
+            })
+        }})
   })
 
 
